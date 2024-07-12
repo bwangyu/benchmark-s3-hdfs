@@ -62,7 +62,7 @@ def benchmark_s3_to_hdfs(elapsed_time, hdfs_path):
         print(f"Path: {path}")
         print(f"Actual Size: {single_size} bytes ({single_size_mb:.2f} MB)")
         print(f"Replicated Size: {replicated_size} bytes ({replicated_size_mb:.2f} MB)")
-        print(f"Throughput: {e2e_throughput:.2f} MB/s")
+        print(f"Throughput: {s3_throughput:.2f} MB/s")
 
 
     except subprocess.CalledProcessError as e:
