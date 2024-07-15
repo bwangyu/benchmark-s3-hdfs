@@ -24,6 +24,8 @@ def run_hive_query(query_str):
         print(f"{result.args} done")
       
     except subprocess.CalledProcessError as e:
+        print(f"Error: {result.stdout}")
+        print(f"Error: {result.args}")
         print(f"Error: {e.stderr}")
         return
 
