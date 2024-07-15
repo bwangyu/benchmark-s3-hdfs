@@ -107,15 +107,19 @@ def split_s3_url(s3_url):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run s3-dist-cp and record the running time.')
     parser.add_argument('--s3', required=True, help='S3 output path (e.g., s3://your-source-bucket/path/)')
-    parser.add_argument('--hiveQuery', 
-                        default="CREATE TABLE store_sales_benchmark_test STORED AS PARQUET LOCATION 's3://hadoop-io-test-771454898274/emr-spark-test-out/' AS SELECT * FROM store_sales where ss_sold_date_sk>=2450816;", 
-                        help='hive query')
+    parser.add_argument('--hiveSrcTable', default='store_sales', help='Hive source table name')
+    parser.add_argument('--hiveDstTable', default='store_sales_benchmark_test', help='Hive destination table name')
 
     args = parser.parse_args()
 
-    # Second, benchmark
+    # Init
     clean_s3(args.s3)
-    elapsed_time = run_hive_query(args.hiveQuery)
+    drop_table_query = f"DROP TABLE IF EXISTS {args.hiveDstTable};"
+    run_hive_query(drop_table_query)
+
+    # Benchmark
+    hive_s3_query = f"CREATE TABLE {args.hiveDstTable} STORED AS PARQUET LOCATION '{args.s3}' AS SELECT * FROM {args.hiveSrcTable} where ss_sold_date_sk>=2450816;"
+    elapsed_time = run_hive_query(hive_s3_query)
     benchmark_hive_to_s3(elapsed_time, args.s3)
 
     
